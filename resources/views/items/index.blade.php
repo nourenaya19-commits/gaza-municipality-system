@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>قائمة الأصناف | مخازن بلدية غزة</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .bg-custom { background-color: #00816a; }
@@ -18,22 +19,31 @@
     </nav>
 
     <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="h2 text-dark">نظام إدارة الأصناف في المخازن</h1>
-                <p class="text-muted">جدول يعرض جميع المواد والأصناف الحالية.</p>
+        
+        @if(session('success'))
+            <div class="alert alert-success text-center shadow-sm mb-4">
+                {{ session('success') }}
             </div>
-            <div class="col-auto text-start">
-                <a href="/items/create" class="btn btn-lg btn-success">+ إضافة صنف جديد</a>
+        @endif
+
+        <div class="row mb-4 align-items-center">
+            <div class="col">
+                <h1 class="h2 text-dark">نظام إدارة الأصناف</h1>
+                <p class="text-muted">عرض وإدارة كافة المواد الموجودة في المخزن.</p>
+            </div>
+            <div class="col-auto">
+                <a href="/items/create" class="btn btn-lg btn-success shadow-sm">
+                    <i class="fas fa-plus"></i> إضافة صنف جديد
+                </a>
             </div>
         </div>
 
-        <div class="card shadow">
-            <div class="card-body">
-                <table class="table table-striped table-hover table-bordered align-middle">
+        <div class="card shadow border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
+                            <th class="ps-4">#</th>
                             <th>اسم الصنف</th>
                             <th>السعر</th>
                             <th class="text-center">الإجراءات</th>
@@ -42,15 +52,19 @@
                     <tbody>
                         @foreach($items as $item)
                         <tr>
-                            <td>{{ $item->id }}</td>
+                            <td class="ps-4">{{ $item->id }}</td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->price }}</td>
+                            <td>{{ $item->price }} شيكل</td>
                             <td class="text-center">
-                                <a href="/items/{{ $item->id }}/edit" class="btn btn-sm btn-warning">تعديل</a>
-                                <form action="/items/{{ $item->id }}" method="POST" style="display:inline;" onsubmit="return confirm('هل أنتِ متأكدة؟')">
+                                <a href="/items/{{ $item->id }}/edit" class="btn btn-sm btn-warning text-white">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="/items/{{ $item->id }}" method="POST" style="display:inline;" onsubmit="return confirm('هل أنتِ متأكدة من حذف هذا الصنف؟')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
