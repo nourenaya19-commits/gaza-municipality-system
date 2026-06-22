@@ -4,57 +4,63 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class ItemController extends Controller
 {
-    public function index()
-    {
-        $items = DB::table('items')->get();
-        return view('items.index', compact('items'));
-    }
+public function index()
+{
+    $items = \App\Models\Item::all();
+    return view('items.index', compact('items'));
+}
 
-    public function create()
-    {
-        return view('items.create');
-    }
+public function create()
+{
+    $categories = \App\Models\Category::all();
+    $units = \App\Models\Unit::all(); 
+    return view('items.create', compact('categories', 'units'));
+}
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'price' => 'required|numeric',
+        'category_id' => 'required',
+        'unit_id' => 'required',
+    ]);
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|min:3',
-            'price' => 'required|numeric|min:0',
-        ]);
+    \App\Models\Item::create($request->all());
 
-        DB::table('items')->insert([
-            'name' => $request->name,
-            'price' => $request->price,
-            'created_at' => now(),
-        ]);
+    return redirect()->route('items.index');
+}
 
-        return redirect('/items')->with('success', 'تمت إضافة الصنف بنجاح!');
-    }
-
-    public function edit($id)
-    {
-        $item = DB::table('items')->where('id', $id)->first();
-        return view('items.edit', ['item' => $item]);
-    }
+public function edit($id)
+{
+    $item = \App\Models\Item::findOrFail($id);
+    $categories = \App\Models\Category::all();
+    $units = \App\Models\Unit::all(); 
+    return view('items.edit', compact('item', 'categories', 'units'));
+}
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|min:3',
-            'price' => 'required|numeric|min:0',
-        ]);
+{
+    $request->validate([
+        'name' => 'required',
+        'price' => 'required|numeric',
+        'category_id' => 'required|exists:categories,id', // تأكدي من وجود هذا السطر
+    ]);
 
-        DB::table('items')->where('id', $id)->update([
-            'name' => $request->name,
-            'price' => $request->price,
-            'updated_at' => now(),
-        ]);
+    $item = \App\Models\Item::findOrFail($id);
+    
+  
+    $item->update([
+        'name' => $request->name,
+        'price' => $request->price,
+        'category_id' => $request->category_id,
+    ]);
 
-        return redirect('/items')->with('success', 'تم تحديث بيانات الصنف بنجاح!');
-    }
+    return redirect()->route('items.index')->with('success', 'تم تحديث بيانات الصنف بنجاح!');
+}
 
     public function destroy($id)
     {

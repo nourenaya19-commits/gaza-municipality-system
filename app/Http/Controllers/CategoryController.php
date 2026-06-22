@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    public function index()
-    {
-        $categories = DB::table('categories')->get();
-        return view('categories.index', compact('categories'));
-    }
+public function index()
+{
+    
+    $categories = \App\Models\Category::all();
+    
+   
+    return view('categories.index', compact('categories'));
+}
 
     public function create()
     {
@@ -20,13 +23,42 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        DB::table('categories')->insert([
-            'name' => $request->name,
-            'description' => $request->description,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $request->validate([
+            'name' => 'required',
         ]);
 
-        return redirect('/categories');
+        Category::create([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', 'تمت إضافة التصنيف بنجاح!');
+    }
+
+    public function edit($id)
+    {
+        $category = Category::findOrFail($id);
+        return view('categories.edit', compact('category'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('categories.index')->with('success', 'تم تحديث التصنيف بنجاح!');
+    }
+
+    public function destroy($id)
+    {
+        Category::findOrFail($id)->delete();
+        return redirect()->route('categories.index')->with('success', 'تم حذف التصنيف بنجاح!');
     }
 }

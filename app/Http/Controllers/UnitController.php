@@ -3,28 +3,56 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Unit;
 
 class UnitController extends Controller
 {
-    // عرض الكل
-    public function index() {
-        $units = DB::table('units')->get();
+    public function index()
+    {
+        $units = Unit::all();
         return view('units.index', compact('units'));
     }
 
-    // عرض صفحة الإضافة
-    public function create() {
+    public function create()
+    {
         return view('units.create');
     }
 
-    // حفظ البيانات (احترافياً)
-    public function store(Request $request) {
-        DB::table('units')->insert([
-            'name' => $request->name,
-            'created_at' => now(),
-            'updated_at' => now(),
+    public function store(Request $request)
+    {
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'symbol' => 'required|string|max:50',
         ]);
-        return redirect('/units')->with('success', 'تم إضافة الوحدة بنجاح');
+
+        Unit::create($request->all());
+        return redirect()->route('units.index')->with('success', 'تمت إضافة الوحدة بنجاح');
+    }
+
+    public function edit($id)
+    {
+        $unit = Unit::findOrFail($id);
+        return view('units.edit', compact('unit'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // التحقق من البيانات أثناء التعديل
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'symbol' => 'required|string|max:50',
+        ]);
+
+        $unit = Unit::findOrFail($id);
+        $unit->update($request->all());
+        return redirect()->route('units.index')->with('success', 'تم تحديث الوحدة بنجاح');
+    }
+
+    public function destroy($id)
+    {
+        $unit = Unit::findOrFail($id);
+        $unit->delete();
+        return redirect()->route('units.index')->with('success', 'تم الحذف بنجاح!');
     }
 }
