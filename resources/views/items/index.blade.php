@@ -1,45 +1,53 @@
-@extends('layouts.app')
+<x-app-layout>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h1 class="text-2xl font-bold mb-4">قائمة الأصناف</h1>
+            
+            <div class="mb-4">
+                <a href="{{ route('items.create') }}" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 10px; text-decoration: none; border-radius: 5px;">
+                    + إضافة صنف جديد
+                </a>
+            </div>
 
-@section('content')
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-secondary fw-bold">إدارة الأصناف</h2>
-        <a href="{{ route('items.create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> إضافة صنف جديد
-        </a>
-    </div>
+            @if(session('success'))
+                <div style="background-color: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-    <div class="card shadow border-0">
-        <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">#</th>
-                        <th>اسم الصنف</th>
-                        <th>التصنيف</th>
-                        <th>الوحدة</th>
-                        <th class="text-center">الإجراءات</th>
+            <table border="1" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">اسم الصنف</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">التصنيف</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">الوحدة</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">الكمية</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($items as $item)
                     <tr>
-                        <td class="ps-4">{{ $item->id }}</td>
-                        <td class="fw-bold">{{ $item->name }}</td>
-                        <td>{{ $item->category ? $item->category->name : 'غير محدد' }}</td>
-                        <td>{{ $item->unit ? $item->unit->name : 'غير محدد' }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('items.edit', $item->id) }}" class="btn btn-sm btn-outline-primary">تعديل</a>
-                            <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="d-inline">
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ $item->name }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ $item->category->name ?? '---' }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ $item->unit->name ?? '---' }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ $item->quantity }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">
+                            <a href="{{ route('items.edit', $item->id) }}" style="color: blue;">تعديل</a>
+                            |
+                            <form action="{{ route('items.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('هل أنتِ متأكدة؟');">
                                 @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('هل أنت متأكد؟')">حذف</button>
+                                <button type="submit" style="color: red; border:none; background:none; cursor:pointer;">حذف</button>
                             </form>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="mt-4">
+                {{ $items->links() }}
+            </div>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

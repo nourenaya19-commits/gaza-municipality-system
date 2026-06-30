@@ -1,64 +1,59 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            إضافة صنف جديد
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        @if ($errors->any())
-            <div class="alert alert-danger shadow-sm">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li><i class="fas fa-exclamation-circle"></i> {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-custom text-white fw-bold py-3">
-                <i class="fas fa-plus-circle"></i> إضافة صنف جديد للمخزن
-            </div>
-            <div class="card-body p-4">
+    <div class="py-12">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                
                 <form action="{{ route('items.store') }}" method="POST">
                     @csrf
-                    <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">اسم الصنف:</label>
-                        <input type="text" name="name" class="form-control" placeholder="مثال: أسمنت بورتلاندي" required>
+
+                    <!-- اسم الصنف -->
+                    <div class="mb-4">
+                        <label class="block mb-2 font-bold">اسم الصنف</label>
+                        <input type="text" name="name" class="w-full border p-2 rounded" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">السعر:</label>
-                        <input type="number" name="price" class="form-control" placeholder="مثال: 50" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">التصنيف:</label>
-                        <select name="category_id" class="form-control" required>
-                            <option value="">-- اختاري التصنيف --</option>
+                    <!-- التصنيف -->
+                    <div class="mb-4">
+                        <label class="block mb-2 font-bold">التصنيف</label>
+                        <select name="category_id" class="w-full border p-2 rounded" required>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label text-dark fw-bold">الوحدة:</label>
-                        <select name="unit_id" class="form-control" required>
-                            <option value="">-- اختاري الوحدة --</option>
+                    <!-- الوحدة -->
+                    <div class="mb-4">
+                        <label class="block mb-2 font-bold">الوحدة</label>
+                        <select name="unit_id" class="w-full border p-2 rounded" required>
                             @foreach($units as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-lg btn-success w-100 mt-3 shadow-sm">
-                        <i class="fas fa-save"></i> حفظ الصنف
+                    <!-- الكمية -->
+                    <div class="mb-4">
+                        <label class="block mb-2 font-bold">الكمية</label>
+                        <input type="number" name="quantity" class="w-full border p-2 rounded" required>
+                    </div>
+
+                    <!-- زر الحفظ -->
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                        حفظ الصنف
                     </button>
-                    <a href="{{ route('items.index') }}" class="btn btn-lg btn-light w-100 mt-2 text-dark border">
-                        <i class="fas fa-arrow-right"></i> رجوع للقائمة
-                    </a>
+                    
+                    <!-- زر الرجوع -->
+                    <a href="{{ route('items.index') }}" class="ml-4 text-gray-600">إلغاء</a>
                 </form>
+
             </div>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

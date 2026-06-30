@@ -38,7 +38,6 @@ class UnitController extends Controller
 
     public function update(Request $request, $id)
     {
-        // التحقق من البيانات أثناء التعديل
         $request->validate([
             'name' => 'required|string|max:255',
             'symbol' => 'required|string|max:50',

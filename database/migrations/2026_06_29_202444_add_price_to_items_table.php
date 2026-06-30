@@ -6,19 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-public function up()
+    public function up()
 {
     Schema::table('items', function (Blueprint $table) {
-        $table->unsignedBigInteger('unit_id')->nullable();
-        $table->foreign('unit_id')->references('id')->on('units')->onDelete('set null');
+        $table->decimal('price', 10, 2)->default(0); // إضافة عمود السعر
     });
 }
 
 public function down()
 {
     Schema::table('items', function (Blueprint $table) {
-        $table->dropForeign(['unit_id']);
-        $table->dropColumn('unit_id');
+        $table->dropColumn('price');
     });
 }
 };
