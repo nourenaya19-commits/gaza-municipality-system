@@ -16,11 +16,11 @@
 - Git/GitHub
 
   🚀 دليل تشغيل المشروع:
-  composer install
-  npm install
-  cp .env.example .env
-  php artisan key:generate
-  php artisan migrate --seed
-  php artisan storage:link
-  php artisan serve
+  - composer install
+  - npm install
+  - cp .env.example .env
+  - php artisan key:generate
+  - php artisan migrate --seed
+  - php artisan storage:link
+  - php artisan serve
   
