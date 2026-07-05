@@ -6,21 +6,24 @@ use App\Models\Item;
 use App\Models\Category;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use App\Models\Store;
+
 
 class ItemController extends Controller
 {
-    public function index()
-    {
-      $items = Item::with(['category', 'unit'])->latest()->paginate(10);
+public function index() {
+    $items = \App\Models\Item::with(['category', 'unit', 'store'])->get();
     return view('items.index', compact('items'));
-    }
+}
 
-    public function edit($id)
+public function edit($id)
 {
-    $item = Item::findOrFail($id);
-    $categories = Category::all();
-    $units = Unit::all();
-    return view('items.edit', compact('item', 'categories', 'units'));
+    $item = \App\Models\Item::findOrFail($id);
+    $categories = \App\Models\Category::all();
+    $units = \App\Models\Unit::all();
+    $stores = \App\Models\Store::all(); // لا تنسي جلب المخازن
+
+    return view('items.edit', compact('item', 'categories', 'units', 'stores'));
 }
 public function destroy($id)
 {
@@ -31,52 +34,34 @@ public function destroy($id)
 }
 public function update(Request $request, $id)
 {
-    $item = Item::findOrFail($id);
+    $item = \App\Models\Item::findOrFail($id);
     
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'quantity' => 'required|numeric',
-        'price' => 'required|numeric',
-        'category_id' => 'required',
-        'unit_id' => 'required',
-    ],[
-    'name.required' => 'يجب إدخال اسم الصنف.',
-    'quantity.required' => 'حقل الكمية مطلوب.',
-    'quantity.numeric' => 'الكمية يجب أن تكون أرقاماً.',
-    'price.required' => 'حقل السعر مطلوب.',
-]);
-
-
+    // هذا السطر سيحفظ كل شيء تم تغييره، بما في ذلك الـ ID الجديد للتصنيف أو الوحدة
     $item->update($request->all());
 
-    return redirect()->route('items.index')->with('success', 'تم التحديث بنجاح');
+    return redirect()->route('items.index')->with('success', 'تم تحديث المادة بنجاح');
 }
-
-    public function create()
-    {
-        $categories = Category::all();
-        $units = Unit::all();
-        return view('items.create', compact('categories', 'units'));
-    }
-
-    public function store(Request $request)
+public function create()
 {
-    
+    $stores = \App\Models\Store::all();
+    $categories = \App\Models\Category::all();
+    $units = \App\Models\Unit::all();
+
+return view('items.create', compact('stores', 'categories', 'units'));}
+
+public function store(Request $request)
+{
     $request->validate([
-        'name' => 'required|string|max:255',
-        'quantity' => 'required|numeric|min:0', 
-        'category_id' => 'required|exists:categories,id',
-        'unit_id' => 'required|exists:units,id',
-    ], [
-        'name.required' => 'اسم الصنف حقل مطلوب.',
-        'quantity.min' => 'الكمية يجب أن تكون أكبر من أو تساوي صفر.',
-        'quantity.required' => 'حقل الكمية مطلوب.',
-    'quantity.numeric' => 'الكمية يجب أن تكون أرقاماً.',
-    'price.required' => 'حقل السعر مطلوب.',
+        'name' => 'required',
+        'category_id' => 'required',
+        'unit_id' => 'required',
+        'store_id' => 'required', 
+        'price' => 'required',
+        'quantity' => 'required',
     ]);
 
-    
-    Item::create($request->all());
-    return redirect()->route('items.index')->with('success', 'تم إضافة الصنف بنجاح!');
+    \App\Models\Item::create($request->all());
+
+    return redirect()->route('items.index')->with('success', 'تم إضافة المادة بنجاح!');
 }
 }

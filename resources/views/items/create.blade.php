@@ -1,59 +1,77 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            إضافة صنف جديد
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                
-                <form action="{{ route('items.store') }}" method="POST">
-                    @csrf
+@section('title', 'إضافة مادة جديدة')
 
-                    <!-- اسم الصنف -->
-                    <div class="mb-4">
-                        <label class="block mb-2 font-bold">اسم الصنف</label>
-                        <input type="text" name="name" class="w-full border p-2 rounded" required>
+@section('content_header')
+    <h1>إدارة المخازن - إضافة مادة جديدة</h1>
+@stop
+
+@section('content')
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">بيانات المادة</h3>
+    </div>
+    <form action="{{ route('items.store') }}" method="POST">
+        @csrf
+        <div class="card-body">
+            <div class="form-group">
+                <label>اسم المادة</label>
+                <input type="text" name="name" class="form-control" placeholder="أدخل اسم المادة" required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>المخزن</label>
+                        <select name="store_id" class="form-control" required>
+                            @foreach($stores as $store)
+                                <option value="{{ $store->id }}">{{ $store->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-
-                    <!-- التصنيف -->
-                    <div class="mb-4">
-                        <label class="block mb-2 font-bold">التصنيف</label>
-                        <select name="category_id" class="w-full border p-2 rounded" required>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>التصنيف</label>
+                        <select name="category_id" class="form-control" required>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
                         </select>
                     </div>
+                </div>
+            </div>
 
-                    <!-- الوحدة -->
-                    <div class="mb-4">
-                        <label class="block mb-2 font-bold">الوحدة</label>
-                        <select name="unit_id" class="w-full border p-2 rounded" required>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>الوحدة (قطعة، متر، كرتونة..)</label>
+                        <select name="unit_id" class="form-control" required>
                             @foreach($units as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- الكمية -->
-                    <div class="mb-4">
-                        <label class="block mb-2 font-bold">الكمية</label>
-                        <input type="number" name="quantity" class="w-full border p-2 rounded" required>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>الكمية الأولية</label>
+                        <input type="number" name="quantity" class="form-control" value="0" required>
                     </div>
-
-                    <!-- زر الحفظ -->
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                        حفظ الصنف
-                    </button>
-                    
-                    <!-- زر الرجوع -->
-                    <a href="{{ route('items.index') }}" class="ml-4 text-gray-600">إلغاء</a>
-                </form>
-
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>السعر (شيكل)</label>
+                        <input type="number" step="0.01" name="price" class="form-control" placeholder="0.00" required>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</x-app-layout>
+
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">حفظ المادة</button>
+            <a href="{{ route('items.index') }}" class="btn btn-default">إلغاء</a>
+        </div>
+    </form>
+</div>
+@stop

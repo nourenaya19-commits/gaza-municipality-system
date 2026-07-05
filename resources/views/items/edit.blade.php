@@ -1,77 +1,75 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            تعديل بيانات الصنف
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    
-                    @if ($errors->any())
-                        <div class="alert alert-danger shadow-sm">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+@section('title', 'تعديل مادة')
 
-                    <div class="card shadow-lg border-0">
-                        <div class="card-header bg-warning text-dark fw-bold py-3">
-                            تعديل بيانات الصنف: {{ $item->name }}
-                        </div>
-                        <div class="card-body p-4">
-                            <form action="{{ route('items.update', $item->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">اسم الصنف:</label>
-                                    <input type="text" name="name" class="form-control" value="{{ $item->name }}" required>
-                                </div>
+@section('content_header')
+    <h1>تعديل بيانات المادة: {{ $item->name }}</h1>
+@stop
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">السعر:</label>
-                                    <input type="number" name="price" class="form-control" value="{{ $item->price }}" required>
-                                </div>
+@section('content')
+<div class="card">
+    <div class="card-body">
+        <form action="{{ route('items.update', $item->id) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">التصنيف:</label>
-                                    <select name="category_id" class="form-control" required>
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}" {{ $item->category_id == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label>اسم المادة</label>
+                    <input type="text" name="name" class="form-control" value="{{ old('name', $item->name) }}" required>
+                </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">الوحدة:</label>
-                                    <select name="unit_id" class="form-control" required>
-                                        @foreach($units as $unit)
-                                            <option value="{{ $unit->id }}" {{ $item->unit_id == $unit->id ? 'selected' : '' }}>
-                                                {{ $unit->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-    <label class="form-label fw-bold">الكمية:</label>
-    <input type="number" name="quantity" class="form-control" value="{{ $item->quantity }}" required>
-</div>
-
-                                <button type="submit" class="btn btn-warning w-100 mt-3 fw-bold">حفظ التعديلات</button>
-                                <a href="{{ route('items.index') }}" class="btn btn-light w-100 mt-2 border">رجوع للقائمة</a>
-                            </form>
-                        </div>
-                    </div>
+                <div class="col-md-6 form-group">
+                    <label>السعر</label>
+                    <input type="number" step="0.01" name="price" class="form-control" value="{{ old('price', $item->price) }}" required>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label>التصنيف</label>
+                    <select name="category_id" class="form-control" required>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ $item->category_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <label>وحدة القياس</label>
+                    <select name="unit_id" class="form-control" required>
+                        @foreach($units as $unit)
+                            <option value="{{ $unit->id }}" {{ $item->unit_id == $unit->id ? 'selected' : '' }}>
+                                {{ $unit->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <label>المخزن</label>
+                    <select name="store_id" class="form-control" required>
+                        @foreach($stores as $store)
+                            <option value="{{ $store->id }}" {{ $item->store_id == $store->id ? 'selected' : '' }}>
+                                {{ $store->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>الكمية الحالية</label>
+                <input type="number" name="quantity" class="form-control" value="{{ old('quantity', $item->quantity) }}" required>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">حفظ التعديلات</button>
+                <a href="{{ route('items.index') }}" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </form>
     </div>
-</x-app-layout>
+</div>
+@stop
