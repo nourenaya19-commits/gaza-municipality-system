@@ -11,12 +11,24 @@
     <div class="card-header">
         <h3 class="card-title">بيانات المادة</h3>
     </div>
-    <form action="{{ route('items.store') }}" method="POST">
+    
+    <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
-            <div class="form-group">
-                <label>اسم المادة</label>
-                <input type="text" name="name" class="form-control" placeholder="أدخل اسم المادة" required>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>اسم المادة</label>
+                        <input type="text" name="name" class="form-control" placeholder="أدخل اسم المادة" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>صورة المادة</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -45,7 +57,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>الوحدة (قطعة، متر، كرتونة..)</label>
+                        <label>الوحدة</label>
                         <select name="unit_id" class="form-control" required>
                             @foreach($units as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->name }}</option>

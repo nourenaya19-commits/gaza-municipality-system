@@ -51,6 +51,7 @@ return view('items.create', compact('stores', 'categories', 'units'));}
 
 public function store(Request $request)
 {
+    // 1. التحقق من البيانات المدخلة
     $request->validate([
         'name' => 'required',
         'category_id' => 'required',
@@ -58,10 +59,23 @@ public function store(Request $request)
         'store_id' => 'required', 
         'price' => 'required',
         'quantity' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // التحقق من أن الملف صورة وبحجم لا يتجاوز 2 ميجا
     ]);
 
-    \App\Models\Item::create($request->all());
+    // 2. تحضير البيانات للحفظ
+    $data = $request->all();
 
-    return redirect()->route('items.index')->with('success', 'تم إضافة المادة بنجاح!');
+    // 3. معالجة رفع الصورة إذا وجدت
+    if ($request->hasFile('image')) {
+        // حفظ الصورة في مجلد 'items' داخل الـ public storage
+        $path = $request->file('image')->store('items', 'public');
+        // إضافة مسار الصورة إلى المصفوفة التي ستُحفظ في قاعدة البيانات
+        $data['image'] = $path;
+    }
+
+    // 4. إنشاء المادة
+    \App\Models\Item::create($data);
+
+    return redirect()->route('items.index')->with('success', 'تمت إضافة المادة مع الصورة بنجاح!');
 }
 }
