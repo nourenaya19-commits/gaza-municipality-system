@@ -44,6 +44,7 @@
                     <td>{{ $item->unit->name ?? 'غير محدد' }}</td>
                     <td>{{ $item->quantity }}</td>
                     <td>{{ number_format($item->price, 2) }} شيكل</td>
+                    <td>{{ $item->price_with_currency }}</td>
                     <td>
                         <a href="{{ route('items.edit', $item->id) }}" class="btn btn-info btn-sm">تعديل</a>
                         <form action="{{ route('items.destroy', $item->id) }}" method="POST" style="display:inline;">

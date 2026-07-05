@@ -3,28 +3,59 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute; // ضروري للـ Mutators الحديثة
 
 class Item extends Model
 {
-protected $fillable = [
-    'name', 'price', 'quantity', 'category_id', 'unit_id', 'store_id', 'image'
-];
-    public function category() {
-        return $this->belongsTo(Category::class);
+    protected $fillable = [
+        'name', 'price', 'quantity', 'store_id', 'category_id', 'unit_id', 'image'
+    ];
+
+    // الـ Attribute Casting
+    protected $casts = [
+        'price' => 'decimal:2',
+        'quantity' => 'integer',
+        'created_at' => 'datetime:Y-m-d',
+    ];
+
+    /**
+     * Mutator & Accessor لاسم المادة (تنظيف وتنسيق الاسم)
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ucwords($value),
+            set: fn (string $value) => trim($value),
+        );
     }
 
-    public function unit() {
-        return $this->belongsTo(Unit::class);
+    /**
+     * Accessor مخصص للسعر ليظهر مع العملة تلقائياً
+     */
+    public function getPriceWithCurrencyAttribute()
+    {
+        return $this->price . ' شيكل';
     }
 
-    public function stocks() { return $this->hasMany(ItemStockLocation::class); }
-    // المادة الواحدة لها حركات متعددة
-    public function transactions() {
-        return $this->hasMany(Transaction::class);
+    /**
+     * العلاقات (Relations)
+     */
+    
+    // علاقة المادة بالمخزن (الأب)
+    public function store() 
+    { 
+        return $this->belongsTo(Store::class); 
     }
-    public function store()
-{
-    return $this->belongsTo(Store::class);
-}
 
+    // علاقة المادة بالتصنيف
+    public function category() 
+    { 
+        return $this->belongsTo(Category::class); 
+    }
+
+    // علاقة المادة بالوحدة
+    public function unit() 
+    { 
+        return $this->belongsTo(Unit::class); 
+    }
 }
